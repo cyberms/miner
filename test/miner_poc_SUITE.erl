@@ -29,7 +29,10 @@
     poc_dist_v8_partitioned_test/1,
     poc_dist_v8_partitioned_lying_test/1,
     no_status_v8_test/1,
-    restart_test/1
+    restart_test/1,
+    poc_dist_v9_test/1,
+    poc_dist_v9_partitioned_test/1,
+    poc_dist_v9_partitioned_lying_test/1
 ]).
 
 -define(SFLOCS, [631210968910285823, 631210968909003263, 631210968912894463, 631210968907949567]).
@@ -67,6 +70,7 @@ all() ->
      poc_dist_v8_test,
      poc_dist_v8_partitioned_test,
      poc_dist_v8_partitioned_lying_test,
+     poc_dist_v9_test,
      %% uncomment when poc placement enforcement starts.
      %% no_status_v8_test,
      restart_test].
@@ -183,6 +187,21 @@ no_status_v8_test(Config) ->
     CommonPOCVars = common_poc_vars(Config),
     ExtraVars = extra_vars(poc_v8),
     run_dist_with_params(poc_dist_v8_test, Config, maps:merge(CommonPOCVars, ExtraVars), false).
+
+poc_dist_v9_test(Config) ->
+    CommonPOCVars = common_poc_vars(Config),
+    ExtraVars = extra_vars(poc_v9),
+    run_dist_with_params(poc_dist_v9_test, Config, maps:merge(CommonPOCVars, ExtraVars)).
+
+poc_dist_v9_partitioned_test(Config) ->
+    CommonPOCVars = common_poc_vars(Config),
+    ExtraVars = extra_vars(poc_v9),
+    run_dist_with_params(poc_dist_v9_partitioned_test, Config, maps:merge(CommonPOCVars, ExtraVars)).
+
+poc_dist_v9_partitioned_lying_test(Config) ->
+    CommonPOCVars = common_poc_vars(Config),
+    ExtraVars = extra_vars(poc_v9),
+    run_dist_with_params(poc_dist_v9_partitioned_lying_test, Config, maps:merge(CommonPOCVars, ExtraVars)).
 
 basic_test(Config) ->
     BaseDir = ?config(base_dir, Config),
@@ -1077,6 +1096,19 @@ do_common_partition_lying_checks(TestCase, Config) ->
     ?assertEqual(lists:sort(maps:to_list(InitialScores)), lists:sort(maps:to_list(FinalScores))),
     ok.
 
+extra_vars(poc_v9) ->
+    #{?poc_version => 9,
+      ?poc_good_bucket_low => -130,
+      ?poc_good_bucket_high => -70,
+      ?poc_v5_target_prob_randomness_wt => 1.0,
+      ?poc_v4_target_prob_edge_wt => 0.0,
+      ?poc_v4_target_prob_score_wt => 0.0,
+      ?poc_v4_prob_rssi_wt => 0.0,
+      ?poc_v4_prob_time_wt => 0.0,
+      ?poc_v4_randomness_wt => 0.5,
+      ?poc_v4_prob_count_wt => 0.0,
+      ?poc_centrality_wt => 0.5,
+      ?poc_max_hop_cells => 2000};
 extra_vars(poc_v8) ->
     #{?poc_version => 8,
       ?poc_good_bucket_low => -132,

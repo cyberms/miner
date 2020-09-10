@@ -73,13 +73,15 @@ handle_cast({transmit, Payload, Frequency, TxLocation}, State = #state{udp_sock=
         fun({Port, Location}) ->
                 Distance = blockchain_utils:distance(TxLocation, Location),
                 RSSI = case POCVersion of
-                             V when V < 8 ->
-                                 FreeSpacePathLoss = ?TRANSMIT_POWER - (32.44 + 20*math:log10(?FREQUENCY) + 20*math:log10(Distance) - ?MAX_ANTENNA_GAIN - ?MAX_ANTENNA_GAIN),
-                                 FreeSpacePathLoss;
-                             _ ->
-                                 %% Use approx_rssi poc_version 8 onwards
-                                 approx_rssi(Distance)
-                         end,
+                           V when V =< 9 ->
+                               10*math:log10((1.8*1.8)*math:pow((4*math:pi()*(?FREQUENCY*100000)*(Distance*100000))/(299792458), 2));
+                           V when V =< 8 ->
+                               FreeSpacePathLoss = ?TRANSMIT_POWER - (32.44 + 20*math:log10(?FREQUENCY) + 20*math:log10(Distance) - ?MAX_ANTENNA_GAIN - ?MAX_ANTENNA_GAIN),
+                               FreeSpacePathLoss;
+                           _ ->
+                               %% Use approx_rssi poc_version 8 onwards
+                               approx_rssi(Distance)
+                       end,
                 case Distance > 32 of
                     true -> ok;
                     false ->
