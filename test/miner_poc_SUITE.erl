@@ -1097,21 +1097,19 @@ do_common_partition_lying_checks(TestCase, Config) ->
     ok.
 
 extra_vars(poc_v9) ->
-    #{?poc_version => 9,
-      ?poc_good_bucket_low => -130,
-      ?poc_good_bucket_high => -70,
-      ?poc_v5_target_prob_randomness_wt => 1.0,
-      ?poc_v4_target_prob_edge_wt => 0.0,
-      ?poc_v4_target_prob_score_wt => 0.0,
-      ?poc_v4_prob_rssi_wt => 0.0,
-      ?poc_v4_prob_time_wt => 0.0,
-      ?poc_v4_randomness_wt => 0.5,
-      ?poc_v4_prob_count_wt => 0.0,
-      ?poc_centrality_wt => 0.5,
-      ?poc_max_hop_cells => 2000};
+    maps:merge(extra_poc_vars(), #{?poc_version => 9, ?data_aggregation_version => 2});
 extra_vars(poc_v8) ->
-    #{?poc_version => 8,
-      ?poc_good_bucket_low => -132,
+    maps:merge(extra_poc_vars(), #{?poc_version => 8});
+extra_vars(_) ->
+    {error, poc_v8_and_above_only}.
+
+location_sets(poc_dist_v8_partitioned_test) ->
+    {sets:from_list(?AUSTINLOCS1), sets:from_list(?LALOCS)};
+location_sets(_TestCase) ->
+    {sets:from_list(?SFLOCS), sets:from_list(?NYLOCS)}.
+
+extra_poc_vars() ->
+    #{?poc_good_bucket_low => -132,
       ?poc_good_bucket_high => -80,
       ?poc_v5_target_prob_randomness_wt => 1.0,
       ?poc_v4_target_prob_edge_wt => 0.0,
@@ -1121,11 +1119,4 @@ extra_vars(poc_v8) ->
       ?poc_v4_randomness_wt => 0.5,
       ?poc_v4_prob_count_wt => 0.0,
       ?poc_centrality_wt => 0.5,
-      ?poc_max_hop_cells => 2000};
-extra_vars(_) ->
-    {error, poc_v8_and_above_only}.
-
-location_sets(poc_dist_v8_partitioned_test) ->
-    {sets:from_list(?AUSTINLOCS1), sets:from_list(?LALOCS)};
-location_sets(_TestCase) ->
-    {sets:from_list(?SFLOCS), sets:from_list(?NYLOCS)}.
+      ?poc_max_hop_cells => 2000}.
