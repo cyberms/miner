@@ -713,6 +713,8 @@ setup_dist_test(TestCase, Config, VarMap, Status) ->
     ok = miner_ct_utils:wait_for_gte(height, Miners, 10, all, 30),
     ok.
 
+gen_locations(poc_dist_v9_partitioned_lying_test, _, _) ->
+    {?AUSTINLOCS1 ++ ?LALOCS, lists:duplicate(4, hd(?AUSTINLOCS1)) ++ lists:duplicate(4, hd(?LALOCS))};
 gen_locations(poc_dist_v8_partitioned_lying_test, _, _) ->
     {?AUSTINLOCS1 ++ ?LALOCS, lists:duplicate(4, hd(?AUSTINLOCS1)) ++ lists:duplicate(4, hd(?LALOCS))};
 gen_locations(poc_dist_v7_partitioned_lying_test, _, _) ->
@@ -721,6 +723,9 @@ gen_locations(poc_dist_v6_partitioned_lying_test, _, _) ->
     {?SFLOCS ++ ?NYLOCS, lists:duplicate(4, hd(?SFLOCS)) ++ lists:duplicate(4, hd(?NYLOCS))};
 gen_locations(poc_dist_v5_partitioned_lying_test, _, _) ->
     {?SFLOCS ++ ?NYLOCS, lists:duplicate(4, hd(?SFLOCS)) ++ lists:duplicate(4, hd(?NYLOCS))};
+gen_locations(poc_dist_v9_partitioned_test, _, _) ->
+    %% These are taken from the ledger
+    {?AUSTINLOCS1 ++ ?LALOCS, ?AUSTINLOCS1 ++ ?LALOCS};
 gen_locations(poc_dist_v8_partitioned_test, _, _) ->
     %% These are taken from the ledger
     {?AUSTINLOCS1 ++ ?LALOCS, ?AUSTINLOCS1 ++ ?LALOCS};
@@ -737,6 +742,9 @@ gen_locations(poc_dist_v4_partitioned_test, _, _) ->
     %% These are taken from the ledger
     {?SFLOCS ++ ?NYLOCS, ?SFLOCS ++ ?NYLOCS};
 gen_locations(poc_dist_v8_test, _, _) ->
+    %% Actual locations are the same as the claimed locations for the dist test
+    {?AUSTINLOCS1 ++ ?AUSTINLOCS2, ?AUSTINLOCS1 ++ ?AUSTINLOCS2};
+gen_locations(poc_dist_v9_test, _, _) ->
     %% Actual locations are the same as the claimed locations for the dist test
     {?AUSTINLOCS1 ++ ?AUSTINLOCS2, ?AUSTINLOCS1 ++ ?AUSTINLOCS2};
 gen_locations(_TestCase, Addresses, VarMap) ->
