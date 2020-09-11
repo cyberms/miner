@@ -58,7 +58,9 @@ init([POCVersion, MyPort, UDPPorts, Status]) ->
             %% just don't start the tick
             ok
     end,
-    {ok, #state{poc_version=POCVersion, udp_sock=Sock, udp_ports=UDPPorts}}.
+    State = #state{poc_version=POCVersion, udp_sock=Sock, udp_ports=UDPPorts},
+    ct:pal("starting fake_radio_backplane, state: ~p", [State]),
+    {ok, State}.
 
 handle_call(Msg, _From, State) ->
     lager:warning("unhandled call ~p", [Msg]),

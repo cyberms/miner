@@ -634,6 +634,7 @@ run_dist_with_params(TestCase, Config, VarMap, Status) ->
     %% show the final receipt counter
     Miners = ?config(miners, Config),
     FinalReceiptMap = challenger_receipts_map(find_receipts(Miners)),
+    ct:pal("FinalReceiptMap: ~p", [FinalReceiptMap]),
     ct:pal("FinalReceiptCounter: ~p", [receipt_counter(FinalReceiptMap)]),
     %% The test endeth here
     ok.
@@ -682,7 +683,7 @@ exec_dist_test(TestCase, Config, VarMap, Status) ->
                               %% that the paths would eventually grow
                               check_multiple_requests(Miners) andalso
                               %% Now we can check whether we have path growth
-                                  check_eventual_path_growth(TestCase, Miners)
+                              check_eventual_path_growth(TestCase, Miners)
                       end,
                       40, 5000),
                     FinalScores = gateway_scores(Config),
@@ -704,8 +705,8 @@ setup_dist_test(TestCase, Config, VarMap, Status) ->
     {_, Locations} = lists:unzip(initialize_chain(Miners, TestCase, Config, VarMap)),
     GenesisBlock = miner_ct_utils:get_genesis_block(Miners, Config),
     RadioPorts = [ P || {_Miner, {_TP, P}} <- MinersAndPorts ],
-    miner_fake_radio_backplane:start_link(maps:get(?poc_version, VarMap), 45000,
-                                          lists:zip(RadioPorts, Locations), Status),
+    {ok, _FakeRadioPid} = miner_fake_radio_backplane:start_link(maps:get(?poc_version, VarMap), 45000,
+                                                                lists:zip(RadioPorts, Locations), Status),
     ok = miner_ct_utils:load_genesis_block(GenesisBlock, Miners, Config),
     miner_fake_radio_backplane ! go,
     %% wait till height 10
@@ -878,7 +879,7 @@ check_growing_paths(TestCase, ReceiptMap, ActiveGateways, PartitionFlag) ->
     lists:all(fun(R) -> R == true end, Results) andalso maps:size(ReceiptMap) > 1.
 
 check_remaining_grow([]) ->
-    true;
+    false;
 check_remaining_grow(TaggedReceipts) ->
     Res = lists:map(fun({_, Receipt}) ->
                             length(blockchain_txn_poc_receipts_v1:path(Receipt)) > 1
