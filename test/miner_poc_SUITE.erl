@@ -875,7 +875,7 @@ check_growing_paths(TestCase, ReceiptMap, ActiveGateways, PartitionFlag) ->
                           end,
                           [],
                           maps:to_list(ReceiptMap)),
-    lists:all(fun(R) -> R == true end, Results).
+    lists:all(fun(R) -> R == true end, Results) andalso maps:size(ReceiptMap) > 1.
 
 check_remaining_grow([]) ->
     true;
