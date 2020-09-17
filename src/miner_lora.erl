@@ -548,12 +548,12 @@ handle_packets([Packet|Tail], Gateway, #state{reg_region = Region} = State) ->
 % Some binary madness going on here
 -spec route_non_longfi(binary()) -> any().
 route_non_longfi(<<?JOIN_REQUEST:3, _:5, AppEUI:64/integer-unsigned-little, DevEUI:64/integer-unsigned-little, _DevNonce:2/binary, _MIC:4/binary>>) ->
-    lager:warning("MATIAS route_non_longfi DevEUI ~p, AppEUI ~p", [DevEUI, AppEUI]),
+    lager:warning("MATIAS route_non_longfi DevEUI ~p, AppEUI ~p", [integer_to_list(DevEUI, 16), integer_to_list(AppEUI, 16)]),
     {lorawan, {eui, DevEUI, AppEUI}};
 route_non_longfi(<<MType:3, _:5, DevAddr:32/integer-unsigned-little, _ADR:1, _ADRACKReq:1, _ACK:1, _RFU:1, FOptsLen:4,
                    _FCnt:16/little-unsigned-integer, _FOpts:FOptsLen/binary, PayloadAndMIC/binary>>) when MType == ?UNCONFIRMED_UP; MType == ?CONFIRMED_UP ->
     Body = binary:part(PayloadAndMIC, {0, byte_size(PayloadAndMIC) -4}),
-    lager:warning("MATIAS route_non_longfi DevAddr ~p", [DevAddr]),
+    lager:warning("MATIAS route_non_longfi DevAddr ~p", [integer_to_list(DevAddr, 16)]),
     {FPort, _FRMPayload} =
         case Body of
             <<>> -> {undefined, <<>>};
