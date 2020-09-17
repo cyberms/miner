@@ -585,6 +585,7 @@ send_to_router(Type, RoutingInfo, Packet, Region) ->
     Freq = maps:get(<<"freq">>, Packet),
     DataRate = maps:get(<<"datr">>, Packet),
     HeliumPacket = blockchain_helium_packet_v1:new(RoutingInfo, Type, Data, Time, RSSI, Freq, DataRate, SNR),
+    lager:warning("MATIAS send_to_router HeliumPacket ~p Miner/DefaultRouters ~p", [HeliumPacket, application:get_env(miner, default_routers, [])]),
     blockchain_state_channels_client:packet(HeliumPacket, application:get_env(miner, default_routers, []), Region).
 
 -spec country_code_for_addr(libp2p_crypto:pubkey_bin()) -> {ok, binary()} | {error, failed_to_find_geodata_for_addr}.
